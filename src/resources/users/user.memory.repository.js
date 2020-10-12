@@ -10,16 +10,10 @@ const get = async id => {
   return user;
 };
 
-const create = async user => {
-  return DBuser.createUser(user);
-};
+const create = async user => DBuser.createUser(user);
 
-const update = async (id, user) => {
-  return DBuser.updateUser(id, user);
-};
+const update = async (id, user) => DBuser.updateUser(id, user);
 
-const remove = async id => {
-  return DBuser.deleteUser(id);
-};
+const remove = async id => DBuser.deleteUser(id);
 
 module.exports = { getAll, get, create, update, remove };

@@ -52,8 +52,9 @@ router.route('/:id').put(async (req, res) => {
       })
     );
     res.status(200).json(User.toResponse(await userService.get(req.params.id)));
-  } catch (e) {
+  } catch (error) {
     res.status(400).send('User update error');
+    console.log(error.message);
   }
 });
 
