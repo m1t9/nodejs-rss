@@ -1,6 +1,7 @@
 const taskService = require('../db/task.db.memory');
 const DBmain = require('./inMemoryDb');
 const DBboard = DBmain.DBBoards;
+const { logger } = require('../handler/logger');
 
 const getAllBoards = async () => DBboard.slice(0);
 
@@ -15,19 +16,21 @@ const createBoard = async board => {
 const updateBoard = async (id, boardBody) => {
   try {
     const board = await getBoard(id);
+    if (!board) return null;
     for (const [key, value] of Object.entries(boardBody)) {
       board[key] = value;
     }
     DBboard[id] = board;
     return board;
   } catch (error) {
-    console.log(error.message);
+    logger.log('error', error.message);
   }
 };
 
 const deleteBoard = async id => {
   try {
     const board = await getBoard(id.toString());
+    if (!board) return false;
     const index = DBboard.indexOf(board);
 
     // When somebody DELETE Board, all its Tasks should be deleted as well.
@@ -37,7 +40,7 @@ const deleteBoard = async id => {
     DBboard.splice(index, 1);
     return true;
   } catch (error) {
-    console.log(error);
+    logger.log('error', error.message);
   }
 };
 

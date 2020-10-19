@@ -1,6 +1,7 @@
 const Task = require('../resources/tasks/task.model');
 const DB = require('./inMemoryDb');
 let DBtask = DB.DBTasks;
+const { logger } = require('../handler/logger');
 
 const getAll = async boardId => DBtask.filter(el => el.boardId === boardId);
 
@@ -9,7 +10,7 @@ const getTaskById = async (boardId, taskId) => {
     const tasks = await getAll(boardId);
     return tasks.filter(el => el.id === taskId)[0];
   } catch (error) {
-    console.log(error.message);
+    logger.log('error', error.message);
   }
 };
 
@@ -24,7 +25,7 @@ const createTask = async (boardId, taskBody) => {
     }
     return newTask;
   } catch (error) {
-    console.log(error.message);
+    logger.log('error', error.message);
   }
 };
 
@@ -40,7 +41,7 @@ const updateTask = async (boardId, taskId, taskBody) => {
     DBtask[taskId.toString()] = task;
     return task;
   } catch (error) {
-    console.log(error.message);
+    logger.log('error', error.message);
   }
 };
 
@@ -51,7 +52,7 @@ const removeTask = async (boardId, taskId) => {
     DBtask.splice(index, 1);
     return true;
   } catch (error) {
-    console.log(error.message);
+    logger.log('error', error.message);
   }
 };
 

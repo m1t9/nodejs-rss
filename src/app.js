@@ -2,6 +2,7 @@ const express = require('express');
 const swaggerUI = require('swagger-ui-express');
 const path = require('path');
 const YAML = require('yamljs');
+
 const userRouter = require('./resources/users/user.router');
 const boardRouter = require('./resources/boards/board.router');
 const taskRouter = require('./resources/tasks/task.router');
@@ -9,10 +10,17 @@ const taskRouter = require('./resources/tasks/task.router');
 const app = express();
 const swaggerDocument = YAML.load(path.join(__dirname, '../doc/api.yaml'));
 
+// logger
+const { requestLogger, handlerError } = require('./handler/logger');
+
 app.use(express.json());
 
 app.use('/doc', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
+// LOGGER MIDDLEWARE
+app.use(requestLogger);
+
+// MIDDLEWARE
 app.use('/', (req, res, next) => {
   if (req.originalUrl === '/') {
     res.send('Service is running!');
@@ -26,11 +34,9 @@ app.use('/boards', boardRouter);
 app.use('/boards/:boardId/tasks', taskRouter);
 // boardRouter.use('/:boardId/tasks', taskRouter);
 
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  // res.status(500).send('Something broke!');
-  res.status(400).send('Bad request');
-  next();
-});
+// uncaughtException / unhandledRejection errors
+// throw Error('Oops!')
+// Promise.reject(Error('Oops!'));
+app.use(handlerError);
 
 module.exports = app;

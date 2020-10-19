@@ -2,13 +2,16 @@ const router = require('express').Router();
 const Board = require('./board.model');
 const boardService = require('./board.service');
 
+const { logger } = require('../../handler/logger');
+const createError = require('http-errors');
+
 // GET ALL BOARDS
 router.route('/').get(async (req, res) => {
   try {
     const boards = await boardService.getAll();
     res.status(200).json(boards);
   } catch (error) {
-    console.log(error.message);
+    logger.log('error', error.message);
   }
 });
 
@@ -17,11 +20,21 @@ router.route('/:id').get(async (req, res) => {
   try {
     const board = await boardService.get(req.params.id);
     if (board) {
-      return res.json(Board.toResponse(board));
+      res.json(Board.toResponse(board));
+    } else {
+      res.status(404).send('Board not found');
+      const time = new Date()
+        .toISOString()
+        .replace(/T/, ' ')
+        .replace(/\..+/, '');
+      throw new createError(
+        404,
+        `${time} ROUTER: board METHOD: ${req.method} URL: ${req.originalUrl} MESSAGE: ${res.statusMessage} STATUS: ${res.statusCode}`,
+        { status: res.statusCode }
+      );
     }
-    res.status(404).send('Board not found');
   } catch (error) {
-    console.log(error.message);
+    logger.log('error', error.message);
   }
 });
 
@@ -38,9 +51,18 @@ router.route('/').post(async (req, res) => {
       res.status(200).json(board);
     } else {
       res.status(400).send('Bad request');
+      const time = new Date()
+        .toISOString()
+        .replace(/T/, ' ')
+        .replace(/\..+/, '');
+      throw new createError(
+        404,
+        `${time} ROUTER: board METHOD: ${req.method} URL: ${req.originalUrl} MESSAGE: ${res.statusMessage} STATUS: ${res.statusCode}`,
+        { status: res.statusCode }
+      );
     }
   } catch (error) {
-    console.log(error.message);
+    logger.log('error', error.message);
   }
 });
 
@@ -50,11 +72,31 @@ router.route('/:id').put(async (req, res) => {
     const board = await boardService.update(req.params.id, req.body);
     if (board) {
       res.status(200).json(board);
-    } else {
+    } else if (board === null) {
       res.status(404).send('Board not found');
+      const time = new Date()
+        .toISOString()
+        .replace(/T/, ' ')
+        .replace(/\..+/, '');
+      throw new createError(
+        404,
+        `${time} ROUTER: board METHOD: ${req.method} URL: ${req.originalUrl} MESSAGE: ${res.statusMessage} STATUS: ${res.statusCode}`,
+        { status: res.statusCode }
+      );
+    } else {
+      res.status(400).send('Bad request');
+      const time = new Date()
+        .toISOString()
+        .replace(/T/, ' ')
+        .replace(/\..+/, '');
+      throw new createError(
+        404,
+        `${time} ROUTER: board METHOD: ${req.method} URL: ${req.originalUrl} MESSAGE: ${res.statusMessage} STATUS: ${res.statusCode}`,
+        { status: res.statusCode }
+      );
     }
   } catch (error) {
-    console.log(error.message);
+    logger.log('error', error.message);
   }
 });
 
@@ -66,9 +108,18 @@ router.route('/:id').delete(async (req, res) => {
       res.status(200).send('The board has been deleted');
     } else {
       res.status(404).send('Board not found');
+      const time = new Date()
+        .toISOString()
+        .replace(/T/, ' ')
+        .replace(/\..+/, '');
+      throw new createError(
+        404,
+        `${time} ROUTER: board METHOD: ${req.method} URL: ${req.originalUrl} MESSAGE: ${res.statusMessage} STATUS: ${res.statusCode}`,
+        { status: res.statusCode }
+      );
     }
   } catch (error) {
-    console.log(error.message);
+    logger.log('error', error.message);
   }
 });
 
