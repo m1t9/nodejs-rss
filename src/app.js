@@ -10,17 +10,24 @@ const taskRouter = require('./resources/tasks/task.router');
 const app = express();
 const swaggerDocument = YAML.load(path.join(__dirname, '../doc/api.yaml'));
 
-// logger
-const { requestLogger, handlerError } = require('./handler/logger');
+// err/log import
+const morgan = require('morgan');
+const winston = require('./handler/logger');
+const { NOT_FOUND } = require('http-status-codes');
+const createError = require('http-errors');
+const errorHandler = require('./errors/errorHandler');
 
+const cors = require('cors');
+const helmet = require('helmet');
+
+app.use(helmet());
+app.use(cors());
 app.use(express.json());
 
-app.use('/doc', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
+if (process.env.NODE_ENV === 'development') {
+  app.use('/doc', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
+}
 
-// LOGGER MIDDLEWARE
-app.use(requestLogger);
-
-// MIDDLEWARE
 app.use('/', (req, res, next) => {
   if (req.originalUrl === '/') {
     res.send('Service is running!');
@@ -29,14 +36,24 @@ app.use('/', (req, res, next) => {
   next();
 });
 
+app.use(
+  morgan(
+    ':method :status :url :query Body :body size :res[content-length] - :response-time ms',
+    {
+      stream: winston.stream
+    }
+  )
+);
+
 app.use('/users', userRouter);
 app.use('/boards', boardRouter);
 app.use('/boards/:boardId/tasks', taskRouter);
-// boardRouter.use('/:boardId/tasks', taskRouter);
+
+app.use((req, res, next) => next(createError(NOT_FOUND)));
 
 // uncaughtException / unhandledRejection errors
-// throw Error('Oops!')
 // Promise.reject(Error('Oops!'));
-app.use(handlerError);
+// throw Error('Oops!')
+app.use(errorHandler);
 
 module.exports = app;
