@@ -19,7 +19,8 @@ const validator = (schema, property) => {
         .status(property === 'body' ? UNPROCESSABLE_ENTITY : BAD_REQUEST)
         .json({ error: errorResponse(error.details) });
     } else {
-      return next();
+      next();
+      return;
     }
   };
 };
