@@ -2,14 +2,20 @@ const { User } = require('../resources/users/user.model');
 const { NOT_FOUND_ERROR } = require('../errors/appError');
 const ENTITY_NAME = 'user';
 const taskRepository = require('./task.DB.repository');
+const { hashPass } = require('../utils/hashHelper');
 
 const getAll = async () => User.find({});
 
-const create = async user => User.create(user);
+const create = async user => {
+  const { name, login } = user;
+  let { password } = user;
+
+  password = await hashPass(password);
+  return User.create({ name, login, password });
+};
 
 const get = async id => {
   const user = await User.findById(id);
-  // const user = await User.findOne({ _id: id });
   if (!user) throw new NOT_FOUND_ERROR(ENTITY_NAME, { id });
   return user;
 };
@@ -17,13 +23,18 @@ const get = async id => {
 const update = async (id, user) => {
   const searchUser = await User.findById(id);
   if (!searchUser) throw new NOT_FOUND_ERROR(ENTITY_NAME, { id });
-  await User.updateOne({ _id: id }, user);
-  return get(id);
+
+  const { name, login } = user;
+  let { password } = user;
+  password = await hashPass(password);
+
+  return User.findByIdAndUpdate(id, { name, login, password }, { new: true });
 };
 
 const remove = async id => {
   const user = await User.findById(id);
   if (!user) throw new NOT_FOUND_ERROR(ENTITY_NAME, { id });
+
   // When somebody DELETE User,
   // all Tasks where User is assignee should be updated to put userId=null.
   taskRepository.usersToNull(id);

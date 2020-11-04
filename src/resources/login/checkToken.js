@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
-const { JWT_SECRET_KEY } = require('../common/config');
-const { UNAUTHORIZED_ERROR } = require('../errors/appError');
+const { JWT_SECRET_KEY } = require('../../common/config');
+const { UNAUTHORIZED_ERROR } = require('../../errors/appError');
 
 const PATH_WHITELIST = ['/', '/login', '/doc'];
 

@@ -8,8 +8,8 @@ const boardRouter = require('./resources/boards/board.router');
 const taskRouter = require('./resources/tasks/task.router');
 
 // task5
-const loginRouter = require('./login/login.router');
-const checkToken = require('./login/checkToken');
+const loginRouter = require('./resources/login/login.router');
+const checkToken = require('./resources/login/checkToken');
 
 const app = express();
 const swaggerDocument = YAML.load(path.join(__dirname, '../doc/api.yaml'));

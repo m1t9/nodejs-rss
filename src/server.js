@@ -5,6 +5,14 @@ const { PORT, MONGO_CONNECTION_STRING } = require('./common/config');
 
 const app = require('./app');
 
+const { hashPass } = require('./utils/hashHelper');
+const { User } = require('./resources/users/user.model');
+
+const admin = async () => {
+  const password = await hashPass('admin');
+  User.create({ login: 'admin', password });
+};
+
 mongoose.connect(MONGO_CONNECTION_STRING, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -20,5 +28,7 @@ db.on('error', () => logger.error('MongoDB connection error:')).once(
     app.listen(PORT, () =>
       logger.info(`App is running on http://localhost:${PORT}`)
     );
+    // db.dropDatabase();
+    admin();
   }
 );
