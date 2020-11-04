@@ -7,6 +7,10 @@ const userRouter = require('./resources/users/user.router');
 const boardRouter = require('./resources/boards/board.router');
 const taskRouter = require('./resources/tasks/task.router');
 
+// task5
+const loginRouter = require('./login/login.router');
+const checkToken = require('./login/checkToken');
+
 const app = express();
 const swaggerDocument = YAML.load(path.join(__dirname, '../doc/api.yaml'));
 
@@ -44,6 +48,10 @@ app.use(
     }
   )
 );
+
+// task5
+app.use('/login', loginRouter);
+app.use('/', checkToken);
 
 app.use('/users', userRouter);
 app.use('/boards', boardRouter);

@@ -20,9 +20,10 @@ const schemas = {
         .min(3)
         .max(40)
         .required(),
-      password: Joi.string().regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[_@$!%*?&])[A-Za-z\d_@$!%*?&]{8,}$/
-      )
+      password: Joi.string().required()
+      // password: Joi.string().regex(
+      //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[_@$!%*?&])[A-Za-z\d_@$!%*?&]{8,}$/
+      // )
     }),
   boardBody: Joi.object()
     .options({ abortEarly: false, allowUnknown: true })

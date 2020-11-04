@@ -9,6 +9,7 @@ const create = async user => User.create(user);
 
 const get = async id => {
   const user = await User.findById(id);
+  // const user = await User.findOne({ _id: id });
   if (!user) throw new NOT_FOUND_ERROR(ENTITY_NAME, { id });
   return user;
 };
