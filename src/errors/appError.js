@@ -12,7 +12,10 @@ class NotFoundError extends Error {
 class ForbiddenError extends Error {
   constructor(entity, params, message) {
     super(
-      message || `Couldn't find a(an) ${entity} with: ${JSON.stringify(params)}`
+      message ||
+        `Couldn't find a(an) ${entity} with: ${JSON.stringify(
+          params
+        )} status (${FORBIDDEN})`
     );
     this.status = FORBIDDEN;
   }
